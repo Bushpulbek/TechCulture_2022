@@ -1,3 +1,5 @@
+import { setTimeout } from "timers/promises";
+
 const { ethers } = require("ethers");
 
 const provider = new ethers.providers.JsonRpcProvider("https://data-seed-prebsc-1-s3.binance.org:8545");
@@ -395,10 +397,10 @@ async function main() {
     const connect_stake = stake_contract.connect(wallet);
 
     // Grant Stake contract with totalSupply/2 tokens and approve this ammount
-    const totalSupply = await connect_token.totalSupply();
-    const tx1 = await connect_token.transfer(Stake_address, totalSupply / 2);
+    const grant = 500000000000000000000000n;
+    const tx1 = await connect_token.transfer(Stake_address, grant);
     await tx1.wait();
-    const tx2 = await connect_token.approve(Stake_address, totalSupply / 2);
+    const tx2 = await connect_token.approve(Stake_address, grant);
     await tx2.wait();
     console.log("'stake' is ready")
     console.log("Balance: ", await connect_token.balanceOf(address));
@@ -409,6 +411,7 @@ async function main() {
     await tx3.wait();
     console.log("Succesfully staked");
     // Second, claim
+    await setTimeout(10000);
     const tx4 = await connect_stake.Claim(address);
     await tx4.wait();
     console.log("Succesfully claimed");
@@ -418,3 +421,5 @@ async function main() {
     console.log("Succesfully withdrawn");
     console.log("Balance: ", await connect_token.balanceOf(address));
 }
+
+main();
